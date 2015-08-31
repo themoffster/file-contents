@@ -8,21 +8,21 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:spring/spring.xml"})
 public class FileReaderTest {
 
+	@Autowired
 	private FileReader reader;
 
-	@Before
-	public void setUp() {
-		reader = new FileReader();
-	}
-	
 	@Test
 	public void getContents() throws IOException {
-		reader.setFile(new File("src/test/resources/com/themoffster/util/sample.txt"));
 		assertEquals("this is a file containing words",	reader.getFileContents());
 	}
 
