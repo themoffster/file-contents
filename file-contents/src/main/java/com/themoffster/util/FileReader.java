@@ -11,6 +11,14 @@ public class FileReader {
 
 	private File file;
 	
+	public FileReader() {
+		
+	}
+	
+	public FileReader(final File file) {
+		this.file = file;
+	}
+	
 	public File getFile() {
 		return file;
 	}

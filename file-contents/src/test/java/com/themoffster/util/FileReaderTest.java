@@ -22,6 +22,13 @@ public class FileReaderTest {
 	private FileReader reader;
 
 	@Test
+	public void checkConstructor() {
+		final File file = reader.getFile();
+		reader = new FileReader(file);
+		assertEquals(file, reader.getFile());
+	}
+	
+	@Test
 	public void getContents() throws IOException {
 		assertEquals("this is a file containing words",	reader.getFileContents());
 	}
