@@ -17,10 +17,11 @@ public class FileContentsStepDefs {
 
 	private FileReader reader;
 	private String fileContents;
+	private static final String BASE_PATH = "src/it/resources/com/themoffster/util/";
 
 	@Given("^I have a text file containing text$")
 	public void processTextFile() throws Throwable {
-		final File file = new File("src/it/resources/com/themoffster/util/non-empty-file.txt");
+		final File file = new File(BASE_PATH + "non-empty-file.txt");
 		reader = new FileReader(file);
 	}
 
@@ -36,7 +37,7 @@ public class FileContentsStepDefs {
 
 	@Given("^I have an empty text file$")
 	public void processEmptyTextFile() throws Throwable {
-		final File file = new File("src/it/resources/com/themoffster/util/empty-file.txt");
+		final File file = new File(BASE_PATH + "empty-file.txt");
 		reader = new FileReader(file);
 	}
 	
@@ -47,7 +48,7 @@ public class FileContentsStepDefs {
 	
 	@Given("^I have a non text file$")
 	public void processNonTextFile() throws Throwable {
-		final File file = new File("src/it/resources/com/themoffster/util/non-text-file.pdf");
+		final File file = new File(BASE_PATH + "non-text-file.pdf");
 		reader = new FileReader(file);
 	}
 
