@@ -233,7 +233,6 @@
 						<configuration>
 							<destFile>${sonar.jacoco.itReportPath}</destFile>
 							<propertyName>jacoco.agent.it.arg</propertyName>
-							<append>true</append>
 						</configuration>
 					</execution>
 					<execution>
