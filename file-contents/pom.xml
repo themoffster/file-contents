@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.themoffster</groupId>
 	<artifactId>file-contents</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 
 	<name>File-contents</name>
-	<description>A simple Maven project designed to give a good understanding of some basic principles around settin gup projects.
+	<description>A simple Maven project designed to give a good understanding of some basic principles around setting up projects.
 				 Features included are:
 					* Unit tests
 					* Integration tests
@@ -25,6 +25,16 @@
 		<cucumber.version>1.2.4</cucumber.version>
 		<cucumber.jvm.version>1.0.5</cucumber.jvm.version>
 		<guava.version>18.0</guava.version>
+		<!-- sonar properties -->
+		<sonar.language>java</sonar.language>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<jacoco.version>0.7.1.201405082137</jacoco.version>
+		<jacoco.outputDir>${project.build.directory}/jacoco</jacoco.outputDir>
+		<jacoco.out.ut.file>jacoco-ut.exec</jacoco.out.ut.file>
+		<jacoco.out.it.file>jacoco-it.exec</jacoco.out.it.file>
+		<sonar.jacoco.reportPath>${jacoco.outputDir}/${jacoco.out.ut.file}</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>${jacoco.outputDir}/${jacoco.out.it.file}</sonar.jacoco.itReportPath>
+		<jdk.version>1.8</jdk.version>
 	</properties>
 
 	<dependencies>
@@ -119,6 +129,16 @@
 		</pluginManagement>
 
 		<plugins>
+			<!-- sets the java version -->
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+
 			<!-- deploys the src/it/* folders -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -134,7 +154,7 @@
 						<configuration>
 							<sources>
 								<source>src/it/java</source>
-								<source>src/it/resources</source>
+								<!-- <source>src/it/resources</source> -->
 							</sources>
 						</configuration>
 					</execution>
@@ -148,9 +168,10 @@
 				<version>2.18.1</version>
 				<configuration>
 					<excludes>
-						<exclude>**/*/*IT.java</exclude>
+						<exclude>src/it/java/*</exclude>
 					</excludes>
 					<skipTests>${skip.unit.tests}</skipTests>
+					<argLine>${jacoco.agent.ut.arg}</argLine>
 				</configuration>
 			</plugin>
 
@@ -160,7 +181,11 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>2.18.1</version>
 				<configuration>
+					<excludes>
+						<exclude>src/test/java/*</exclude>
+					</excludes>
 					<skipTests>${skip.integration.tests}</skipTests>
+					<argLine>${jacoco.agent.it.arg}</argLine>
 				</configuration>
 				<executions>
 					<execution>
@@ -168,6 +193,59 @@
 							<goal>integration-test</goal>
 							<goal>verify</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- jacoco plugin reports integration tests for Sonar -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<id>prepare-ut-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${sonar.jacoco.reportPath}</destFile>
+							<propertyName>jacoco.agent.ut.arg</propertyName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-unit-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${sonar.jacoco.reportPath}</dataFile>
+							<outputDirectory>${jacoco.outputDir}/jacoco-ut</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>prepare-it-agent</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${sonar.jacoco.itReportPath}</destFile>
+							<propertyName>jacoco.agent.it.arg</propertyName>
+							<append>true</append>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${sonar.jacoco.itReportPath}</dataFile>
+							<outputDirectory>${jacoco.outputDir}/jacoco-it</outputDirectory>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -192,6 +270,5 @@
 				<skip.integration.tests>false</skip.integration.tests>
 			</properties>
 		</profile>
-
 	</profiles>
 </project>

@@ -24,7 +24,7 @@ public class FileReaderTest {
 	@Test
 	public void checkConstructor() {
 		final File file = reader.getFile();
-		reader = new FileReader(file);
+		reader.setFile(file);
 		assertEquals(file, reader.getFile());
 	}
 	
